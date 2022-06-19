@@ -1,0 +1,136 @@
+version: "3.9"
+
+services:
+
+  mysql:
+    build:
+      context: ./requirements/mariadb
+      args:
+        - mysql_root_password=${MYSQL_ROOT_PASSWORD}
+        - mysql_user=${MYSQL_USER}
+        - mysql_password=${MYSQL_PASSWORD}
+        - mysql_db=${MYSQL_DB}
+    image: mysql:cvignar
+    env_file: .env
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - inception
+    restart: always
+    container_name: mysql
+
+  nginx:
+    build:
+      context: ./requirements/nginx
+      args:
+        - domain_name=${DOMAIN_NAME}
+    depends_on:
+      - wordpress
+      - adminer
+    image: nginx:cvignar
+    env_file: .env
+    ports:
+      - "0.0.0.0:5443:5443"
+      - "0.0.0.0:5080:5080"
+      - ":::80:80"
+      - ":::443:443"
+    volumes:
+      - wp:/usr/share/wordpress
+      - ad:/usr/share/adminer
+      - html:/var/www/html
+      - ${CERTS_}:/etc/nginx/ssl
+    networks:
+      - inception
+    restart: always
+    container_name: nginx
+
+  wordpress:
+    build:
+      context: ./requirements/wordpress
+      args:
+        - mysql_db=${MYSQL_DB}
+        - mysql_user=${MYSQL_USER}
+        - mysql_password=${MYSQL_PASSWORD}
+        - wordpress_db_host=${WORDPRESS_DB_HOST}
+        - wordpress_table_prefix=${WORDPRESS_TABLE_PREFIX}
+        - wordpress_debug=${WORDPRESS_DEBUG}
+    depends_on:
+      - mysql
+    image: wordpress:cvignar
+    env_file: .env
+    volumes:
+      - wp:/usr/share/wordpress
+    networks:
+      - inception
+    restart: always
+    container_name: wordpress
+    
+  redis:
+    build:
+      context: ./requirements/bonus/redis
+    depends_on:
+      - nginx
+    image: redis:cvignar
+    env_file: .env
+    volumes:
+      - rd:/var/lib/redis
+    networks:
+      - inception
+    restart: always
+    container_name: redis
+
+  adminer:
+    build:
+      context: ./requirements/bonus/adminer
+    depends_on:
+      - wordpress
+    image: adminer:cvignar
+    env_file: .env
+    volumes:
+      - ad:/usr/share/adminer
+    networks:
+      - inception
+    restart: always
+    container_name: adminer
+
+volumes:
+  wp:
+    name: wp
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/wp
+  db:
+    name: db
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/db
+  rd:
+    name: rd
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/rd
+  ad:
+    name: ad
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/ad
+  html:
+    name: html
+    driver_opts:
+      type: none
+      o: bind
+      device: ~/data/html
+
+networks:
+  inception:
+    driver: bridge
+    name: inception
+    enable_ipv6: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "2607:f2c0:f00f:5942:face::/80"

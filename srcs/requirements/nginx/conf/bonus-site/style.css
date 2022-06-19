@@ -1,0 +1,99 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  color: #000000;
+}
+
+h1 {
+  margin: 0 auto 8px;
+  font-family: "Arial", serif;
+  text-align: center;
+  font-weight: normal;
+  font-size: 130px;
+  line-height: 64px;
+}
+
+a:hover {
+  color: #154088;
+  font-size: 20px;
+  font-weight: bold;
+  border-bottom: .07em solid;
+  text-align: center;
+}
+a:active {
+  color: #497DDD;
+  border-bottom: 1px dashed;
+  text-align: center;
+}
+
+h2 {
+  border-bottom: 2px solid #cccccc;
+  text-align: center;
+  margin: 30% auto;
+  padding-bottom: 12px;
+}
+
+.container {
+  width: 510px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.site-header {
+  min-width: 550px;
+  height: 186px;
+  margin-bottom: 70px;
+  padding-top: 30px;
+  background: #e0ffff no-repeat center url("img/sea.jpg");
+  background-size: cover;
+  color: #000000;
+}
+
+.site-header p {
+  width: 255px;
+  margin: 0 auto 26px;
+  text-align: center;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.site-header img {
+  display: block;
+  margin: 0 auto;
+}
+
+.features {
+  width: 700px;
+  margin: 1% auto;
+  padding: 5% 50px;
+  text-align: center;
+}
+
+.features p {
+  display: inline-block;
+  vertical-align: top;
+  width: 30%;
+  margin: 0 5px;
+  background-repeat: no-repeat;
+  background-position: center top;
+  text-align: center;
+}
+
+.site-footer {
+  min-width: 550px;
+  background-color: #847462;
+  color: #ffffff;
+}
+
+.site-footer .container {
+  text-align: center;
+}
+
+.site-footer p {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 20px;
+}

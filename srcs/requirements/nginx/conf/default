@@ -1,0 +1,47 @@
+server {
+		listen 5080 proxy_protocol;
+		listen [::]:80;
+		server_name DOMAIN_NAME www.DOMAIN_NAME;
+		return 302 https://$host$request_uri;
+}
+
+server {
+        listen 5443 ssl proxy_protocol;
+        listen [::]:443 ssl;
+        server_name DOMAIN_NAME www.DOMAIN_NAME;
+        root /usr/share/wordpress;
+        index index.html index.php;
+        ssl_certificate /etc/nginx/ssl/fullchain.cer;
+        ssl_certificate_key /etc/nginx/ssl/DOMAIN_NAME.key;
+		location ~ \.php$ {
+			try_files $uri =404;
+			fastcgi_pass wordpress:9000;
+			fastcgi_index index.php;
+			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+			include fastcgi_params;
+		}
+
+		location /html/ {
+			root /var/www;
+			autoindex on;
+			index index.html;
+		}
+
+		location /adminer/ {
+			root /usr/share/adminer;
+			location ~ \.php$ {
+				try_files $uri =404;
+				fastcgi_pass adminer:9000;
+				fastcgi_index index.php;
+				fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+				include fastcgi_params;
+			}
+		}
+
+		# deny access to .htaccess files, if Apache's document root
+		# concurs with nginx's one
+		
+		location ~ /\.ht {
+			deny all;
+		}
+}
